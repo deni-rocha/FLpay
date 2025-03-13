@@ -16,4 +16,5 @@ model User {
   reset_token   String?
   reset_expires DateTime?
   created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
 }
