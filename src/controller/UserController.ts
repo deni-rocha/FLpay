@@ -3,6 +3,7 @@ import prisma from '../database/prisma';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import User from '../types/User';
 
 
 class UserController {
@@ -239,7 +240,7 @@ class UserController {
 
             res.status(200).json({
                 count: users.length,
-                users: users.map(user => ({
+                users: users.map((user: User) => ({
                     ...user,
                     created_at: user.created_at.toISOString(),
                     updated_at: user.updated_at?.toISOString()
