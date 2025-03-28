@@ -6,7 +6,7 @@
     "build": "tsc",
     "start": "tsx ./src/server.ts",
     "dev": "tsx watch --include \"./src/*\"  ./src/server.ts",
-    "db:deploy": "./setup-database.py",
+    "db:deploy": "npx prisma migrate dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "deni-rocha",
