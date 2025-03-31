@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "./src/server.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "NODE_ENV=prod tsc",
     "start": "tsx ./src/server.ts",
-    "dev": "tsx watch --include \"./src/*\"  ./src/server.ts",
-    "db:deploy": "npx prisma migrate dev",
+    "dev": "npm run db:deploy && tsx watch --include \"./src/*\"  ./src/server.ts",
+    "db:deploy": "tsx setup-database.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "deni-rocha",
