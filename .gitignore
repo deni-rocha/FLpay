@@ -1,6 +1,6 @@
 node_modules
-.env
-prisma/migrations/*
-!prisma/migrations/.gitkeep
+.env.*
 dist
 api.http
+prisma/migrations/**/.cache
+prisma/schema.prisma.backup*
