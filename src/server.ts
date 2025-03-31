@@ -1,7 +1,10 @@
 import express from 'express';
-import 'dotenv/config';
 import userRouter from './routes/user.routes';
-import setupDatabase from './utils/setup-database';
+import dotenv from 'dotenv';
+
+
+// configuração de variáveis de ambiente
+dotenv.config({ path: `.env.${process.env.NODE_ENV || 'dev'}` })
 
 const app = express();
 
@@ -10,8 +13,6 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// inicialização do banco de dados (verificação de tabelas e migrations do prisma)
-setupDatabase()
 
 app.use("/user", userRouter)
 
