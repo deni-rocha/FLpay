@@ -1,12 +1,11 @@
 #!/usr/bin/env ts-node
-
 import { execSync } from 'child_process';
-import pg from 'pg';
+import { Client } from 'pg';
 import { parse } from 'pg-connection-string';
+import dotenv from 'dotenv';
 
-
-
-const { Client } = pg;
+// configuração de variáveis de ambiente
+dotenv.config({ path: `.env.${process.env.NODE_ENV || 'dev'}` })
 
 interface DBConfig {
     user: string;
@@ -17,7 +16,7 @@ interface DBConfig {
 }
 
 const DATABASE_URL = process.env.DATABASE_URL;
-console.log(DATABASE_URL)
+
 if (!DATABASE_URL) {
     throw new Error('DATABASE_URL not found in .env file');
 }
@@ -39,6 +38,7 @@ async function checkDatabaseExists(): Promise<boolean> {
             'SELECT 1 FROM pg_database WHERE datname = $1',
             [dbConfig.database]
         );
+        console.log(res)
         return res.rows.length > 0;
     }
     finally {
@@ -69,11 +69,11 @@ async function checkMigrationsTable(): Promise<boolean> {
     try {
         await client.connect();
         const res = await client.query(`
-      SELECT EXISTS (
-        SELECT FROM pg_tables 
+      SELECT EXISTS(
+                SELECT FROM pg_tables 
         WHERE tablename = 'prisma_migrations'
-      )
-    `);
+            )
+            `);
         return res.rows[0].exists;
     } catch {
         return false;
@@ -82,7 +82,7 @@ async function checkMigrationsTable(): Promise<boolean> {
     }
 }
 
-async function setupDatabase(): Promise<void> {
+async function main(): Promise<void> {
     try {
         if (!(await checkDatabaseExists())) {
             console.log('Creating database and applying migrations...');
@@ -103,4 +103,4 @@ async function setupDatabase(): Promise<void> {
     }
 }
 
-export default setupDatabase;
+main()
