@@ -5,7 +5,7 @@ import { parse } from 'pg-connection-string';
 import dotenv from 'dotenv';
 
 // configuração de variáveis de ambiente
-dotenv.config({ path: `.env.${process.env.NODE_ENV || 'dev'}` })
+dotenv.config({ path: `.env.${process.env.NODE_ENV || ''}` })
 
 interface DBConfig {
     user: string;

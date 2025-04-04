@@ -2,8 +2,10 @@ import { Request, Response } from 'express';
 import prisma from '../database/prisma';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
+import crypto, { randomUUID } from 'crypto';
 import User from '../types/User';
+import { generateVerificationToken } from '../utils/token.utils';
+import { sendVerificationEmail } from '../services/email.service';
 
 
 class UserController {
@@ -25,21 +27,25 @@ class UserController {
             }
 
             const hashedPassword = await bcrypt.hash(password, 10);
-            const verificationToken = crypto.randomBytes(32).toString('hex');
+
+            const id = randomUUID()
+
+            const token = generateVerificationToken(id);
 
             const user = await prisma.user.create({
                 data: {
+                    id,
                     name,
                     email,
                     password_hash: hashedPassword,
-                    reset_token: verificationToken,
+                    reset_token: token,
                     reset_expires: new Date(Date.now() + 86400000), // 24h
                 },
                 select: { id: true, name: true, email: true, created_at: true }
             });
 
-            // Enviar email de verificação (implementar)
-            // sendVerificationEmail(email, verificationToken);
+            // envia token por e-mail
+            await sendVerificationEmail(email, token);
 
             res.status(201).json({
                 message: 'Usuário criado com sucesso. Verifique seu email.',
@@ -108,7 +114,9 @@ class UserController {
             if (!user.verified) {
                 res.status(403).json({ error: 'Email não verificado' });
                 return
+
             }
+
 
             const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
                 expiresIn: '1d'
@@ -131,7 +139,7 @@ class UserController {
 
             if (email) {
                 const existing = await prisma.user.findUnique({ where: { email } });
-                if (existing && existing.id !== Number(id)) {
+                if (existing && existing.id !== id) {
                     res.status(409).json({ error: 'Email já em uso' });
                     return
                 }
@@ -144,7 +152,7 @@ class UserController {
             }
 
             const user = await prisma.user.update({
-                where: { id: Number(id) },
+                where: { id: id },
                 data: updateData,
                 select: { id: true, name: true, email: true, updated_at: true }
             });
