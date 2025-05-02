@@ -10,5 +10,6 @@ userRouter.post('/auth', UserController.authenticate);
 userRouter.put('/:id', UserController.updateUser);
 userRouter.post('/forgot-password', UserController.forgotPassword);
 userRouter.post('/reset-password', UserController.resetPassword);
+userRouter.delete('/:id', UserController.deleteUser);
 
 export default userRouter;

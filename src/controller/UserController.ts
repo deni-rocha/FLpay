@@ -259,6 +259,26 @@ class UserController {
             res.status(500).json({ error: 'Erro ao buscar usuários' });
         }
     }
+
+    // DELETE /users/:id
+    async deleteUser(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+
+            const user = await prisma.user.findUnique({ where: { id } });
+            if (!user) {
+            res.status(404).json({ error: 'Usuário não encontrado' });
+            return;
+            }
+
+            await prisma.user.delete({ where: { id } });
+
+            res.status(200).json({ message: 'Usuário deletado com sucesso' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+    }
 }
 
 export default new UserController();
