@@ -1,5 +1,7 @@
 import sgMail from '@sendgrid/mail';
+import dotenv from 'dotenv';
 
+dotenv.config({ path: '.env.dev' });
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
 export const sendVerificationEmail = async (to: string, token: string) => {
@@ -7,7 +9,7 @@ export const sendVerificationEmail = async (to: string, token: string) => {
 
     const msg = {
         to,
-        from: 'no-reply@seuapp.com', // Deve ser verificado no SendGrid
+        from: 'frevolink@gmail.com', // Deve ser verificado no SendGrid
         subject: 'Verifique seu e-mail',
         html: `
       <p>Clique no link abaixo para verificar seu e-mail:</p>
