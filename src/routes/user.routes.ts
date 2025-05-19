@@ -5,7 +5,7 @@ const userRouter = express.Router();
 
 userRouter.get('/', UserController.getAllUsers)
 userRouter.post('/register', UserController.createUser);
-userRouter.get('/verify/:token', UserController.verifyEmail);
+userRouter.get('/verify', UserController.verifyEmail);
 userRouter.post('/auth', UserController.authenticate);
 userRouter.put('/:id', UserController.updateUser);
 userRouter.post('/forgot-password', UserController.forgotPassword);

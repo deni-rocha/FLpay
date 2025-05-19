@@ -60,7 +60,11 @@ class UserController {
     // GET /verify/:token
     async verifyEmail(req: Request, res: Response) {
         try {
-            const { token } = req.params;
+            const token = req.query.token as string;
+            if (!token) {
+                res.status(400).json({ error: 'Token não fornecido' });
+                return;
+            }
 
             const user = await prisma.user.findFirst({
                 where: {

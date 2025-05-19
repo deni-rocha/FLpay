@@ -5,15 +5,22 @@ dotenv.config({ path: '.env.dev' });
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
 export const sendVerificationEmail = async (to: string, token: string) => {
-    const verificationLink = `${process.env.BASE_URL}/verify?token=${token}`;
+    const verificationLink = `${process.env.BASE_URL}/user/verify?token=${token}`;
 
     const msg = {
         to,
         from: 'frevolink@gmail.com', // Deve ser verificado no SendGrid
-        subject: 'Verifique seu e-mail',
+        subject: 'Confirmação de E-mail - FLpay',
         html: `
-      <p>Clique no link abaixo para verificar seu e-mail:</p>
-      <a href="${verificationLink}">${verificationLink}</a>
+      <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
+        <h2 style="color: #4CAF50;">Bem-vindo ao FLpay!</h2>
+        <p>Obrigado por se registrar. Para começar, por favor confirme seu e-mail clicando no link abaixo:</p>
+        <p style="text-align: center; margin: 20px 0;">
+          <a href="${verificationLink}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Verificar E-mail</a>
+        </p>
+        <p>Se você não se registrou no FLpay, ignore este e-mail.</p>
+        <p>Atenciosamente,<br/>Equipe FLpay</p>
+      </div>
     `,
     };
 
