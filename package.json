@@ -5,7 +5,7 @@
   "scripts": {
     "build": "NODE_ENV=prod tsc",
     "start": "tsx ./src/server.ts",
-    "dev": "NODE_ENV=dev npm run db:deploy && tsx watch --include \"./src/*\"  ./src/server.ts",
+    "dev": "tsx watch --include \"./src/*\"  ./src/server.ts",
     "db:deploy": "tsx setup-database.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

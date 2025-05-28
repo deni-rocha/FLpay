@@ -6,18 +6,25 @@ import crypto, { randomUUID } from 'crypto';
 import User from '../types/User';
 import { generateVerificationToken } from '../utils/token.utils';
 import { sendVerificationEmail } from '../services/email.service';
+import { error } from 'console';
 
 
 class UserController {
     // POST /users
     async createUser(req: Request, res: Response) {
         try {
-            const { name, email, password } = req.body;
+            const { name, email, password, role } = req.body;
 
             // Verificações básicas
             if (!name || !email || !password) {
                 res.status(400).json({ error: 'Todos os campos são obrigatórios' });
                 return
+            }
+
+            const allowedRoles = ['user', 'admin', null, undefined];
+            if (!allowedRoles.includes(role)) {
+                res.status(400).json({ error: 'O campo role deve ser "user", "admin" ou nulo' });
+                return;
             }
 
             const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -37,6 +44,7 @@ class UserController {
                     id,
                     name,
                     email,
+                    role,
                     password_hash: hashedPassword,
                     reset_token: token,
                     reset_expires: new Date(Date.now() + 86400000), // 24h
@@ -45,7 +53,15 @@ class UserController {
             });
 
             // envia token por e-mail
-            await sendVerificationEmail(email, token);
+           try {
+                await sendVerificationEmail(email, token);
+            } catch (emailError) {
+                // Se falhar, remove o usuário criado
+                await prisma.user.delete({ where: { id } });
+                console.error('Erro ao enviar e-mail:', emailError);
+                res.status(500).json({ error: 'Erro ao enviar e-mail de verificação. Tente novamente.' });
+            }
+
 
             res.status(201).json({
                 message: 'Usuário criado com sucesso. Verifique seu email.',
@@ -87,12 +103,12 @@ class UserController {
                 },
             });
 
-            res.status(200).json({ message: 'Email verificado com sucesso!' });
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: 'Erro interno do servidor' });
+                res.status(200).json({ message: 'Email verificado com sucesso!' });
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Erro interno do servidor' });
+            }
         }
-    }
 
     // POST /auth
     async authenticate(req: Request, res: Response) {
@@ -101,7 +117,7 @@ class UserController {
 
             const user = await prisma.user.findUnique({
                 where: { email },
-                select: { id: true, password_hash: true, verified: true }
+                select: { id: true, password_hash: true, verified: true, role: true }
             });
 
             if (!user) {
@@ -122,7 +138,7 @@ class UserController {
             }
 
 
-            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
+            const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!, {
                 expiresIn: '1d'
             });
 
@@ -246,6 +262,7 @@ class UserController {
                     verified: true,
                     created_at: true,
                     updated_at: true,
+                    role: true,
                     // Não incluir campos sensíveis como password_hash, reset_token, etc
                 }
             });

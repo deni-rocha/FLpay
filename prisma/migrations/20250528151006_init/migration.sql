@@ -9,6 +9,7 @@ CREATE TABLE "User" (
     "reset_expires" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
+    "role" TEXT NOT NULL DEFAULT 'user',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );

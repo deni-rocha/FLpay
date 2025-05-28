@@ -2,7 +2,7 @@ services:
   db:
     image: postgres:15
     environment:
-      - POSTGRES_DB=flpaydb # Nome do banco 
+      - POSTGRES_DB=realcestore # Nome do banco 
       - POSTGRES_USER=frevolink # Usuário 
       - POSTGRES_PASSWORD=flpassword # Senha 
     ports:
@@ -12,7 +12,7 @@ services:
     networks:
       - api-network
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U user -d flpaydb" ]
+      test: [ "CMD-SHELL", "pg_isready -U user -d realcestore" ]
       interval: 5s
       timeout: 5s
       retries: 5
