@@ -27,16 +27,16 @@ export const sendVerificationEmail = async (to: string, token: string) => {
       await transporter.sendMail({
       from: '"Ralce Store" frevolink@email.com',
       to,
-      subject: 'Confirmação de E-mail - FLpay',
+      subject: 'Confirmação de E-mail - Realce Store',
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
-          <h2 style="color: #4CAF50;">Bem-vindo ao FLpay!</h2>
+          <h2 style="color: #4CAF50;">Bem-vindo ao Realce Store',!</h2>
           <p>Obrigado por se registrar. Para começar, por favor confirme seu e-mail clicando no link abaixo:</p>
           <p style="text-align: center; margin: 20px 0;">
             <a href="${verificationLink}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Verificar E-mail</a>
           </p>
-          <p>Se você não se registrou no FLpay, ignore este e-mail.</p>
-          <p>Atenciosamente,<br/>Equipe FLpay</p>
+          <p>Se você não se registrou no Realce Store',, ignore este e-mail.</p>
+          <p>Atenciosamente,<br/>Equipe Realce Store',</p>
         </div>
       `
     });
