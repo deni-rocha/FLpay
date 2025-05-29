@@ -101,7 +101,9 @@ class UserController {
         },
       });
 
-      res.status(200).json({ message: 'Email verificado com sucesso!' });
+      res.sendFile(
+        require('path').resolve(__dirname, '../views/email-verified.html')
+      )
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Erro interno do servidor' });
