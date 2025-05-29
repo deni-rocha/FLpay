@@ -2,17 +2,17 @@ services:
   db:
     image: postgres:15
     environment:
-      - POSTGRES_DB=realcestore # Nome do banco 
-      - POSTGRES_USER=frevolink # Usuário 
-      - POSTGRES_PASSWORD=flpassword # Senha 
+      - POSTGRES_DB=realcestore # Nome do banco
+      - POSTGRES_USER=frevolink # Usuário
+      - POSTGRES_PASSWORD=flpassword # Senha
     ports:
-      - "5432:5432" # Porta do host:porta do container   
+      - '5432:5432' # Porta do host:porta do container
     volumes:
-      - postgres_data:/var/lib/postgresql/data # Volume para persistência 
+      - postgres_data:/var/lib/postgresql/data # Volume para persistência
     networks:
       - api-network
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U user -d realcestore" ]
+      test: ['CMD-SHELL', 'pg_isready -U user -d realcestore']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -22,7 +22,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "3000:3000"
+      - '3000:3000'
     networks:
       - api-network
     env_file:
