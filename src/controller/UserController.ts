@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import crypto, { randomUUID } from 'crypto';
 import User from '../types/User';
 import { generateVerificationToken } from '../utils/token.utils';
-import { sendVerificationEmail } from '../services/email.service';
+import { sendVerificationEmail, sendResetPasswordEmail } from '../services/email.service';
 
 class UserController {
   // POST /users
@@ -101,9 +101,7 @@ class UserController {
         },
       });
 
-      res.sendFile(
-        require('path').resolve(__dirname, '../views/email-verified.html')
-      )
+      res.sendFile(require('path').resolve(__dirname, '../views/email-verified.html'));
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Erro interno do servidor' });
@@ -136,9 +134,13 @@ class UserController {
         return;
       }
 
-      const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET!, {
-        expiresIn: '1d',
-      });
+      const token = jwt.sign(
+        { id: user.id, role: user.role, verified: user.verified },
+        process.env.JWT_SECRET!,
+        {
+          expiresIn: '1d',
+        }
+      );
 
       res.status(200).json({ token });
     } catch (error) {
@@ -206,7 +208,7 @@ class UserController {
       });
 
       // Enviar email de reset (implementar)
-      // sendPasswordResetEmail(email, resetToken);
+      await sendResetPasswordEmail(email, resetToken, user.name);
 
       res.status(200).json({ message: 'Email de recuperação enviado' });
     } catch (error) {
@@ -249,6 +251,16 @@ class UserController {
     }
   }
 
+  // GET /reset-password
+  async getResetPasswordPage(_req: Request, res: Response) {
+    try {
+      res.sendFile(require('path').resolve(__dirname, '../views/reset-password.html'));
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Erro ao carregar a página de redefinição de senha' });
+    }
+  }
+  
   // GET /users
   async getAllUsers(_req: Request, res: Response) {
     try {
